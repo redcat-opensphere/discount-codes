@@ -1,7 +1,13 @@
-# Uses https://httpie.io/
-http POST 'http://localhost:8081/discounts/' 'name=PROMO12' 'amount=20' 'enterprise=ALBACETEBANK' 'type=VALUE'
-http POST 'http://localhost:8081/discounts?seconds=2000' 'name=PROMO35' 'amount=10' 'enterprise=MERCADONO' 'type=PERCENT'
-http GET 'http://localhost:8081/discounts/consume/PROMO12'
-http GET 'http://localhost:8081/discounts/consume/PROMO35'
-http GET 'http://localhost:8081/discounts/VALUE'
-http GET 'http://localhost:8081/discounts/PERCENT'
+#!/bin/sh
+set -e
+
+curl -H "Content-Type: application/json" http://localhost:8081/discounts -d '{ "name": "PROMO12", "amount": 20, "enterprise": "ALBACETEBANK", "type": "VALUE"}'
+curl -H "Content-Type: application/json" http://localhost:8081/discounts -d '{ "name": "PROMO35", "amount": 10, "enterprise": "MERCADONO", "type": "PERCENT" }'
+curl http://localhost:8081/discounts/consume/PROMO12
+echo ""
+curl http://localhost:8081/discounts/consume/PROMO35
+echo ""
+curl http://localhost:8081/discounts/VALUE
+echo ""
+curl http://localhost:8081/discounts/PERCENT
+echo ""
