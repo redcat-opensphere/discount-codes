@@ -1,8 +1,11 @@
 package com.redhat.challenge.discount;
 
-import com.redhat.challenge.discount.model.DiscountCode;
-import com.redhat.challenge.discount.model.DiscountCodeType;
+import java.net.URI;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,25 +14,29 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.infinispan.client.hotrod.RemoteCache;
+
+import com.redhat.challenge.discount.model.DiscountCode;
+import com.redhat.challenge.discount.model.DiscountCodeType;
+
+import io.quarkus.infinispan.client.Remote;
 
 @Path("/discounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DiscountCodesResource {
 
-    Map<String, DiscountCode> discounts = new HashMap<>();
+	@Inject
+	@Remote("discounts")
+	RemoteCache<String, DiscountCode> discounts;
 
     @POST
-    public Response create(DiscountCode discountCode) {
+	public Response create(DiscountCode discountCode) {
         if (!discounts.containsKey(discountCode.getName())) {
             discountCode.setUsed(0);
-            discounts.put(discountCode.getName(), discountCode);
-            return Response.created(URI.create(discountCode.getName())).build();
+			discounts.put(discountCode.getName(), discountCode, discountCode.getExpiration(), TimeUnit.SECONDS);
+			return Response.created(URI.create(discountCode.getName())).build();
         }
 
         return Response.ok(URI.create(discountCode.getName())).build();
@@ -40,7 +47,7 @@ public class DiscountCodesResource {
     public Response consume(@PathParam("name") String name) {
         DiscountCode discountCode = discounts.get(name);
 
-        if(discountCode == null) {
+		if (discountCode == null) {
             return Response.noContent().build();
         }
 
@@ -49,6 +56,18 @@ public class DiscountCodesResource {
 
         return Response.ok(discountCode).build();
     }
+
+	@GET
+	@Path("/find/{name}")
+	public Response find(@PathParam("name") String name) {
+		DiscountCode discountCode = discounts.get(name);
+
+		if (discountCode == null) {
+			return Response.noContent().status(404).build();
+		}
+
+		return Response.ok(discountCode).build();
+	}
 
     @GET
     @Path("/{type}")
