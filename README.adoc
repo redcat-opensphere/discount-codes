@@ -74,10 +74,17 @@ PROMO12, SEPHORA, 20, PERCENT (20% discount in Sephora) D1876, ZARA, 10, VALUE (
 
 == Exercise 2: List your discount codes
 
+Implement REST API endpoints that:
 
-Implement the REST API that puts the values in the cache. Implement the REST API that given the type discount code (PERCENT or VALUE) displays the list of discount codes available.
+1. Adds values in the cache. 
+2. That displays the list of discount  codes available for a given type of discount code (`PERCENT` or `VALUE`).
 
 For simplicity, let’s assume that this API won’t be called concurrently.
+
+[TIP]
+====
+You can see examples of how to call this endpoints in the `discountCreator.sh` script.
+====
 
 
 
@@ -114,8 +121,8 @@ Change the discount code creation REST endpoint to add a parameter that will mak
 == Bonus track 2
 Change the discount code consumer REST API to count how many PERCENT or VALUE codes have been used globally. Modify the discount code list REST endpoint to include that numeric value in the payload.
 
-PROMO12, 315, SEPHORA, 20, PERCENT (20% discount in Sephora used 315 times)
-D1876, 55, ZARA, 10, VALUE (10 euros of discount in Zara used 55 times)
+* PROMO12, 315, SEPHORA, 20, PERCENT (20% discount in Sephora used 315 times)
+* D1876, 55, ZARA, 10, VALUE (10 euros of discount in Zara used 55 times)
 
 
 == Bonus track 3
