@@ -2,27 +2,40 @@ package com.redhat.challenge.discount.model;
 
 import java.util.Objects;
 
+import org.infinispan.protostream.annotations.ProtoFactory;
+import org.infinispan.protostream.annotations.ProtoField;
+
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
 public class DiscountCode {
 
-	private String name;
-	private Integer amount;
-	private String enterprise;
-	private DiscountCodeType type;
-	private Integer used;
-	private Long expiration;
+	@ProtoField(number = 1)
+	String name;
+	@ProtoField(number = 2)
+	Integer amount;
+	@ProtoField(number = 3)
+	String enterprise;
+	@ProtoField(number = 4)
+	DiscountCodeType type;
+	@ProtoField(number = 5)
+	Integer used;
+	@ProtoField(number = 6)
+	Long expiration;
 
-	public DiscountCode() {
-	}
-
-	public DiscountCode(String name, Integer amount, String enterprise, DiscountCodeType type, Integer used) {
+	@ProtoFactory
+	public DiscountCode(String name, Integer amount, String enterprise, DiscountCodeType type, Integer used,
+			Long expiration) {
 		this.name = name;
 		this.amount = amount;
 		this.enterprise = enterprise;
 		this.type = type;
 		this.used = used;
+		this.expiration = expiration;
+	}
+
+	public DiscountCode() {
+
 	}
 
 	public String getName() {

@@ -35,11 +35,16 @@ public class DiscountCodesResource {
 	public Response create(DiscountCode discountCode) {
         if (!discounts.containsKey(discountCode.getName())) {
             discountCode.setUsed(0);
+			System.out.println(discountCode.toString());
+			if (discountCode.getExpiration() != 0) {
 			discounts.put(discountCode.getName(), discountCode, discountCode.getExpiration(), TimeUnit.SECONDS);
-			return Response.created(URI.create(discountCode.getName())).build();
+			} else {
+				discounts.put(discountCode.getName(), discountCode);
+			}
+			return Response.created(URI.create("find/" + discountCode.getName())).build();
         }
 
-        return Response.ok(URI.create(discountCode.getName())).build();
+		return Response.ok(URI.create("find/" + discountCode.getName())).build();
     }
 
     @GET
@@ -76,5 +81,4 @@ public class DiscountCodesResource {
               .collect(Collectors.toList());
         return new DiscountCodes(discountCodes, discountCodes.size());
     }
-
 }
